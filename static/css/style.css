@@ -1,0 +1,24 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+#map {
+  height: 400px;
+  margin-bottom: 20px;
+}
+#news {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+#news-ticker {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #b30000;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  z-index: 9999;
+}
