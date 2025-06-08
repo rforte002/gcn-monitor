@@ -14,13 +14,16 @@ def get_news():
     if not api_key:
         return jsonify({"error": "Chave da API não configurada"}), 500
 
-    url = f"https://newsapi.org/v2/top-headlines?country=br&apiKey={api_key}"
     try:
+        url = f"https://newsapi.org/v2/top-headlines?country=br&apiKey={api_key}"
         response = requests.get(url)
         data = response.json()
-        return jsonify(data.get("articles", []))
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+        # Verifica se 'articles' existe e é uma lista
+        articles = data.get("articles", [])
+        if not isinstance(articles, list):
+            return jsonify([])
+
+        return jsonify(articles)
+    except Exception as e:
+        return jsonify({"error": f"Erro ao obter notícias: {str(e)}"}), 500
