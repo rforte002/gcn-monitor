@@ -10,9 +10,7 @@ def index():
 
 @app.route("/api/news")
 def get_news():
-    api_key = os.environ.get("NEWS_API_KEY")
-    if not api_key:
-        return jsonify({"error": "Chave da API não configurada"}), 500
+    return jsonify([{"title": "Teste de resposta OK"}])
 
     try:
         url = f"https://newsapi.org/v2/top-headlines?country=br&apiKey={api_key}"
