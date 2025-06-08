@@ -13,7 +13,7 @@ def get_news():
     return jsonify([{"title": "Teste de resposta OK"}])
 
     try:
-        url = f"https://newsapi.org/v2/top-headlines?country=br&apiKey={api_key}"
+        url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
         response = requests.get(url)
         data = response.json()
 
