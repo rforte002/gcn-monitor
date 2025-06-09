@@ -1,18 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <title>GCN Monitor</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <meta charset="UTF-8" />
+  <title>Monitoramento GCN - Orizon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #990000;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    #breaking {
+      background-color: #ffcccc;
+      padding: 0.8rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-align: center;
+      font-weight: bold;
+    }
+    #noticias {
+      padding: 1rem;
+    }
+    .noticia {
+      border-bottom: 1px solid #ddd;
+      padding: 0.5rem 0;
+    }
+    .map-button {
+      background-color: #007bff;
+      color: white;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border-radius: 4px;
+      margin: 1rem;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
-  <h1>Monitoramento GCN em Tempo Real</h1>
-  <div id="map"></div>
-  <div id="news"></div>
-  <div id="news-ticker">
-    <marquee behavior="scroll" direction="left" id="ticker-content">Carregando alertas...</marquee>
+
+  <header>
+    <h1>Painel de Monitoramento GCN</h1>
+  </header>
+
+  <div id="breaking">Carregando notícia crítica...</div>
+
+  <div style="text-align:center;">
+    <a href="/map" class="map-button">Visualizar Mapa das Unidades</a>
   </div>
-  <script src="/static/js/script.js"></script>
+
+  <div id="noticias">
+    <h2>Notícias Relevantes</h2>
+    <div id="lista-noticias"></div>
+  </div>
+
+  <script>
+    async function carregarNoticias() {
+      try {
+        const resposta = await fetch("/api/news");
+        const noticias = await resposta.json();
+
+        const lista = document.getElementById("lista-noticias");
+        lista.innerHTML = "";
+
+        if (Array.isArray(noticias) && noticias.length > 0) {
+          // Mostra a mais crítica no topo
+          document.getElementById("breaking").textContent = "🛑 " + noticias[0].title;
+
+          noticias.forEach(noticia => {
+            const item = document.createElement("div");
+            item.classList.add("noticia");
+            item.innerHTML = `
+              <strong>${noticia.title}</strong><br/>
+              <small>${new Date(noticia.publishedAt).toLocaleString()}</small><br/>
+              <a href="${noticia.url}" target="_blank">Leia mais</a>
+            `;
+            lista.appendChild(item);
+          });
+        } else {
+          document.getElementById("breaking").textContent = "Nenhuma notícia crítica no momento.";
+        }
+      } catch (erro) {
+        document.getElementById("breaking").textContent = "Erro ao carregar notícias.";
+        console.error(erro);
+      }
+    }
+
+    carregarNoticias();
+  </script>
+
 </body>
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mapa das Unidades Orizon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 90vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    const map = L.map("map").setView([-23.503636, -46.848389], 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
+
+    const unidades = [
+      { nome: "Orizon - Barueri (SP)", lat: -23.503636, lng: -46.848389 },
+      { nome: "Orizon - Rio de Janeiro", lat: -22.911013, lng: -43.209373 },
+      { nome: "Advice Health - Florianópolis", lat: -27.571584, lng: -48.503406 }
+    ];
+
+    unidades.forEach(unidade => {
+      L.marker([unidade.lat, unidade.lng])
+        .addTo(map)
+        .bindPopup(unidade.nome);
+    });
+  </script>
+</body>
+</html>
