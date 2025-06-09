@@ -10,37 +10,30 @@ def index():
 
 @app.route("/api/news")
 def get_news():
-    api_key = os.environ.get("NEWS_API_KEY")
+    api_key = os.environ.get("GNEWS_API_KEY")
     if not api_key:
         return jsonify({"error": "Chave da API não configurada"}), 500
 
     try:
-        # Termos críticos para continuidade de negócio nas 3 cidades
-        keywords = (
-            "São Paulo OR Rio de Janeiro OR Florianópolis "
-            "AND (enchente OR violência OR apagão OR tiroteio OR "
-            "roubo de dados OR ataque hacker OR crise)"
-        )
+        # Palavras-chave relacionadas a continuidade
+        keywords = "catástrofe OR enchente OR violência OR tiroteio OR sequestro OR vazamento de dados OR ciberataque"
+        # Áreas geográficas de interesse
+        cities = ["São Paulo", "Rio de Janeiro", "Florianópolis"]
+        results = []
 
-        # Monta a URL com encoding apropriado
-        url = (
-            "https://newsapi.org/v2/everything?"
-            f"q={requests.utils.quote(keywords)}&"
-            "language=pt&"
-            "sortBy=publishedAt&"
-            f"apiKey={api_key}"
-        )
+        for city in cities:
+            query = f"{keywords} {city}"
+            url = (
+                f"https://gnews.io/api/v4/search?q={query}"
+                f"&lang=pt&country=br&max=5&apikey={api_key}"
+            )
+            response = requests.get(url)
+            data = response.json()
 
-        response = requests.get(url)
-        response.raise_for_status()  # Lança erro se a resposta for 4xx ou 5xx
+            articles = data.get("articles", [])
+            results.extend(articles)
 
-        data = response.json()
-
-        articles = data.get("articles", [])
-        if not isinstance(articles, list):
-            return jsonify([])
-
-        return jsonify(articles)
+        return jsonify(results)
     except Exception as e:
         return jsonify({"error": f"Erro ao obter notícias: {str(e)}"}), 500
 
